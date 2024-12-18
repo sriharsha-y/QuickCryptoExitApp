@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -13,6 +13,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
@@ -24,6 +25,11 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {
+  setJSExceptionHandler,
+  setNativeExceptionHandler,
+} from 'react-native-exception-handler';
+import {useNavigation} from '@react-navigation/native';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -57,6 +63,15 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const navigation = useNavigation();
+  useEffect(() => {
+    setJSExceptionHandler((error, isFatal) => {
+      console.log('JS Exception Handler Called');
+    });
+    setNativeExceptionHandler(exceptionString => {
+      console.log('Native Exception Handler Called');
+    });
+  }, []);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -72,6 +87,15 @@ function App(): React.JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <Header />
+        <TouchableOpacity
+          style={{flex: 1, alignSelf: 'center'}}
+          onPress={() => {
+            navigation.navigate('Page2');
+          }}>
+          <Text style={{fontSize: 20, fontWeight: '600'}}>
+            Navigate to Page 2
+          </Text>
+        </TouchableOpacity>
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
